@@ -1,0 +1,40 @@
+Preliminares
+#Node.js v12.16+
+#npm v6.13.7+
+
+#instalacion node js
+# Using Ubuntu
+curl -sL https://deb.nodesource.com/setup_14.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+
+#instalacion de la herramienta de Generacion de codigo
+sudo npm install -g @asyncapi/generator
+
+#ejemplo de alumbrado publico
+
+#creacion del proyecto nodeJS
+ag asyncAPI.yaml -o nodeJS -p server=mosquitto @asyncapi/nodejs-template
+
+cd nodeJS
+
+#instalacion de paquetes del proyecto
+npm install
+
+#arrancar la aplicacion
+npm start
+
+#inicializar el broker
+#en otra consola 
+docker run -it -p 1883:1883 eclipse-mosquitto
+
+
+#incializar el emisor publisher
+abrir otra terminal
+sudo npm install mqtt@4.0.0 -g
+
+#envio de mensaje a la aplicacion  (llamado a pub channel) smartylighting/streetlights/1/0/event/1/lighting/measured
+
+mqtt pub -t 'smartylighting/streetlights/1/0/event/2/lighting/measured' -h 'localhost' -m '{"lumens": 3, "sentAt": "2020-08-20T10:34:32.000Z"}'
+
+mqtt pub -t 'smartylighting/streetlights/1/0/event/1/lighting/measured' -h 'localhost' -m '{"id": 1, "lumens": 3, "sentAt": "2020-08-20T10:34:32.000Z"}'

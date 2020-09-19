@@ -1,0 +1,53 @@
+Pasos
+1. Descargar los archivos RideDropoffProcessor.yaml y RideDropoffConsumer.yaml de solance https://solace.com/
+2. Para RideDropoffProcessor, agregar:	
+2.1. para el metodo subscribe taxi/nyc/v1/statusUpdate:
+	x-scs-function-name: processDropoffRideAverages
+	x-scs-destination: test/taxi/RideDropoffProcessorQueue
+	
+2.2. para el publish taxi/nyc/v1/stats/dropoff/avg:
+	x-scs-function-name: processDropoffRideAverages
+3. Generar el proyecto para el RideDropoffProcessor 
+
+3.1 Usar el generador de AsyncAPI para crear el proyecto
+ag 
+-o RideDropoffProcessor 
+-p binder=solace 
+-p reactive=true 
+-p actuator=true 
+-p artifactId=RideDropoffProcessor 
+-p groupId=org.taxi.nyc 
+-p javaPackage=org.taxi.nyc 
+-p host=tcps://mrg3jw4qy92zv.messaging.solace.cloud:55443
+-p username=solace-cloud-client
+-p password=t1n9re9mslbe7ja4cdtus81hvg 
+-p msgVpn=demo
+RideDropoffProcessor.yaml 
+@asyncapi/java-spring-cloud-stream-template
+
+
+
+ag -o RideDropoffProcessor -p binder=solace -p reactive=true -p actuator=true -p artifactId=RideDropoffProcessor -p groupId=org.taxi.nyc -p javaPackage=org.taxi.nyc -p host=tcps://mrg3jw4qy92zv.messaging.solace.cloud:55443 -p username=solace-cloud-client -p password=t1n9re9mslbe7ja4cdtus81hvg -p msgVpn=demo RideDropoffProcessor.yaml @asyncapi/java-spring-cloud-stream-template
+
+
+3.2 Agregar logica de negocio en la clase Application.java del proyecto, (codigo fuente en la carpeta anexos)
+
+
+3.3 Ejecutar el proyecto mvn spring-boot:run
+
+
+4. Generar el proyecto para el RideDropoffConsumer 
+
+4.1 Usar el generador de codigo de AsyncAPI con los siguienes parametros
+
+ag -o RideDropoffConsumer -p binder=solace -p actuator=true -p artifactId=RideDropoffConsumer -p groupId=org.taxi.nyc -p javaPackage=org.taxi.nyc -p host=tcps://mrg3jw4qy92zv.messaging.solace.cloud:55443 -p username=solace-cloud-client -p password=t1n9re9mslbe7ja4cdtus81hvg -p msgVpn=demo RideDropoffConsumer.yaml @asyncapi/java-spring-cloud-stream-template
+
+4.2 Agregar logica de negocio en la clase Application.java del proyecto 
+	return rideAverageUpdate -> {
+			logger.info("Received Ride Average Event:" + rideAverageUpdate);
+		};
+4.3 cambiar el server.port en el archivo application.yml para que no tenga conflicto con la otra app
+
+4.4 Ejecutar el proyecto mvn spring-boot:run
+
+
